@@ -18,6 +18,9 @@ class Department(models.Model):
         verbose_name = "部门信息"
         verbose_name_plural = "部门信息"
 
+    def __str__(self):
+        return self.name
+
     pass
 
 
@@ -32,5 +35,8 @@ class Position(models.Model):
     class Meta:
         verbose_name = "职位信息"
         verbose_name_plural = "职位信息"
+
+    def __str__(self):
+        return self.name
 
     pass
