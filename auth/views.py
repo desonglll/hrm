@@ -1,28 +1,22 @@
-from django.shortcuts import render
+import json
 
-from django.shortcuts import render, redirect
+from django.http.response import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 
 from employee.forms import EmployeeCreationForm
-from django.contrib.auth.models import Permission
 
 
+@csrf_exempt
 def register(request):
     if request.method == "POST":
-        print(request.POST)
-        form = EmployeeCreationForm(request.POST)
+        body = json.loads(request.body)
+        username = body.get("username")
+        password = body.get("password")
+        print(username, password)
+        form = EmployeeCreationForm(data={"username": username, "password1": password, "password2": password})
         if form.is_valid():
-            user = form.save(commit=False)
-            user.is_staff = True
-            user.save()
-
-            view_employee_permission = Permission.objects.get(codename="view_employee")
-            change_employee_permission = Permission.objects.get(
-                codename="change_employee"
-            )
-            user.user_permissions.add(view_employee_permission)
-            user.user_permissions.add(change_employee_permission)
-
-            return redirect("login")
-    else:
-        form = EmployeeCreationForm()
-    return render(request, "registration/register.html", {"form": form})
+            employee = form.save()
+            return JsonResponse({"msg": "Success", "username": employee.username})
+        else:
+            return JsonResponse({"msg": "Failed", "errors": form.errors}, status=400)
+    return JsonResponse({"msg": "Please use POST"}, status=405)

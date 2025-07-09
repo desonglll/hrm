@@ -1,6 +1,7 @@
-from django.db import models
-from django.contrib.auth.models import AbstractUser
 from uuid import uuid4
+
+from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 
 class Employee(AbstractUser):
@@ -10,6 +11,7 @@ class Employee(AbstractUser):
         default=uuid4,
         editable=False,
     )
+    photo = models.ImageField(upload_to="uploads/%Y/%m/%d/", null=True, blank=True)
     age = models.PositiveIntegerField(verbose_name="年龄", default=18)
     department = models.ForeignKey(
         "department.Department",
