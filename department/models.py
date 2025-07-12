@@ -6,10 +6,6 @@ class Department(models.Model):
     id = models.UUIDField(
         verbose_name="编号", null=False, default=uuid4(), primary_key=True
     )
-    # number = models.CharField(
-    #     max_length=20,
-    #     unique=True,
-    # )
     name = models.CharField(verbose_name="部门名称", blank=False)
     createdAt = models.DateTimeField(verbose_name="创建时间", auto_now=True)
     updatedAt = models.DateTimeField(verbose_name="更新时间", auto_now=True)

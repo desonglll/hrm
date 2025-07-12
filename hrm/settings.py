@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'rest_framework_simplejwt',
+    "account",
     "employee",
     "department",
     "orgunit",
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+
 ]
 
 ROOT_URLCONF = "hrm.urls"
@@ -61,7 +63,7 @@ ROOT_URLCONF = "hrm.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],
+        # "DIRS": [BASE_DIR / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -142,15 +144,38 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:5173",
 ]
 
-# CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True
+
+
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # ✅ 必须开启这个
+        # 'rest_framework.authentication.BasicAuthentication',
+
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ]
+}
+SIMPLE_JWT = {
+    # 访问令牌有效期（比如 5 分钟）
+    "ACCESS_TOKEN_LIFETIME": timedelta(seconds=5),
+
+    # 刷新令牌有效期（比如 1 天）
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+
+    # 是否允许刷新后的 token 延长 refresh_token 生命周期（可选）
+    "ROTATE_REFRESH_TOKENS": False,
+
+    # 是否强制黑名单机制（需要启用黑名单 app）
+    "BLACKLIST_AFTER_ROTATION": True,
+
+    # 签名算法（默认 HS256）
+    "ALGORITHM": "HS256",
+    "SIGNING_KEY": SECRET_KEY,
+
+    # 如果你要跨域传 cookie，可以设置下面这项
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }
